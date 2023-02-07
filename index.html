@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>ToDoApp</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="calendar-container">
+    </div>
+    <div class="inputs-container"> 
+        <label name="title-event" class="name-of-input">Name of event:</label>   
+        <input id="title-event" type="text" class="text-action">
+
+        <label for="start-event" class="name-of-input">Start</label>
+        <input id="start-event" type="time" class="start-action">
+
+        <label for="duration-event"class="name-of-input">Duration in minutes:</label>
+        <input id="duration-event" type="number" class="duration-action">
+
+        <button type="button" class="input-btn-add">Add an event</button>
+        <button type="button" class="input-btn-close">Close this window</button>
+
+        <!-- <label name="color-event-background" class="color-background">Background color</label>  
+        <input  id="color-event-background"  type="color" value="#E2ECF5">
+                        
+        <label name="color-event-border" class="color-border" style="background-color: rgb(226, 236, 245, 0.5);">Border color</label>  
+        <input  id="color-event-border"  type="color" value="#6E9ECF"> -->
+    </div>     
+    
+    <!-- open input field button -->
+    <button class="open-inputs-btn" type="button">Add new event</button>
+   
+    <div class="modal-info">Modal window with information about event</div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
