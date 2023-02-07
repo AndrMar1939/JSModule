@@ -181,10 +181,7 @@ class RenderActions {
 
         this.#renderHours = renderHours;
 
-        this.renderToDoList(this.#toDoList);
-        this.modalWindowOptions();
-
-        
+        this.renderToDoList(this.#toDoList);    
     }
 
     renderOneAct(act){
@@ -209,8 +206,8 @@ class RenderActions {
         let actsCollection = list.map(item => this.renderOneAct(item));
         this.container.append(...actsCollection);
 
-        // remove events 
-            // this.modalWindowOptions();
+        // modal 
+        this.modalWindowOptions();
 
 
     }
@@ -356,10 +353,8 @@ class RenderActions {
     
                     inputChangeEventContainer.append(actNameInputLabel);
     
-                    // actNameInput.addEventListener('input', () => {
-                    //     titleText.textContent = actNameInput.value;
-                    // })
-                        // new start
+
+                    // new start
                     
                     const actStartInput = document.createElement("input"); 
                     actStartInput.type = 'time';
@@ -443,9 +438,9 @@ class RenderActions {
 
                          modalWindow.append(inputColorContainer, inputChangeEventContainer, containerForButtons);  
 
-                        // toDoList = toDoList.sort(function (a,b) {return a.start - b.start});
-                        // this.#toDoList = new ListOfActions(toDoList);
-                        // this.renderToDoList(this.#toDoList.items);
+                        toDoList = toDoList.sort(function (a,b) {return a.start - b.start});
+                        this.#toDoList = new ListOfActions(toDoList);
+                        this.renderToDoList(this.#toDoList.items);
       
                     })   
     
