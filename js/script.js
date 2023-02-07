@@ -46,7 +46,7 @@ let toDoList = [
         start: 405,
         duration: 30,
         title: "Push up branch",
-    },    
+    },
 ]
 
 
@@ -74,14 +74,14 @@ class RenderHours {
         return this.container.append(hourBlock);
     }
     renderAll() {
-        for (let i = 8; i <=17; i++) {
+        for (let i = 8; i <= 17; i++) {
             this.renderHour(i);
         }
     }
 }
 // _____________________________________________________________________________________________
 class Act {
-    constructor(item){
+    constructor(item) {
         Object.assign(this, item);
         this.width = 200;
         this.end = item.start + item.duration;
@@ -94,77 +94,38 @@ class Act {
 
 class ListOfActions {
 
-    constructor (list){
-        list = list.sort(function (a,b) {return a.start - b.start});
+    constructor(list) {
+        list = list.sort(function (a, b) { return a.start - b.start });
         this.items = list.map(item => new Act(item));
         this.calculateWidthAndLeft();
+
     }
 
-    calculateWidthAndLeft(){  
+    calculateWidthAndLeft() {
         // width    
+        let arr = [];
+        this.items.forEach (item => {
+            for (let i = 0; i < this.items.length; i++) {
+                
+                if(item.end > this.items[i].start && item.start < this.items[i].start  ||
+                    item.end > this.items[i].start && item.end < this.items[i].end) {                    
+                    arr.push(item);
+                    arr.push(this.items[i]);
+                    
+                    item.width = 100;
+                    this.items[i].width = 100;
 
-        let arrOfSameTimeActs = this.items.filter( item => {
-            let i = this.items.indexOf(item);
-            if (i < this.items.length - 1 && item.end > this.items[i+1].start || 
-                i > 0 && item.start < this.items[i-1].end) {
-                return true
-            } 
-        });     
+                    
+                    console.log(item);
+                    console.log(this.items[i]);
 
-        // let arrOfSameTimeActs = this.items.filter( item => {
-        //     let i = this.items.indexOf(item);
-        //     for (const ch of this.items) {
-        //         if (item.id > ch.id && item.end > ch.start) {
-        //         return true
-        //     } 
-        //     }
-
-        // });     
-
-        arrOfSameTimeActs.forEach(element => {
-            element.width = element.width/2;
-        });
-        // leftX coordinate
-
-            for (let i = 0; i < arrOfSameTimeActs.length-1; i++){
-                if(arrOfSameTimeActs[i+1].id - arrOfSameTimeActs[i].id === 1) {
-                    if (arrOfSameTimeActs[i].leftX === 40) {
-                        arrOfSameTimeActs[i+1].leftX += 100;
+                    if(item.leftX === this.items[i].leftX) {
+                        this.items[i].leftX += 100;
                     }
-                    else if (arrOfSameTimeActs[i].leftX === 140 && i >=1 && arrOfSameTimeActs[i-1].end > arrOfSameTimeActs[i+1].start) {
-                        arrOfSameTimeActs[i+1].leftX += 200;
-                    } 
-                    else if (arrOfSameTimeActs[i].leftX === 140 && i >=1 && arrOfSameTimeActs[i].end > arrOfSameTimeActs[i+1].start) {
-                        arrOfSameTimeActs[i+1].leftX += 200;
-                    }
-                    else if (arrOfSameTimeActs[i].leftX === 240) {
-                        arrOfSameTimeActs[i+1].leftX = 40;
-                    }
+                                      
                 }
-            }
-
-
-        // for (const ch of this.items) {
-
-        //     for (const e of this.items) {
-      
-        //         if(ch.id !== e.id && ch.end > e.start && e.start > ch.start && ch.end > e.end) {
-        //             console.log('+');
-        //             ch.width = 100;
-        //         } else 
-        //         if ( ch.id !== e.id && ch.end >= e.start && e.start > ch.start) {
-        //             console.log('++');
-        //             ch.width = 100;
-        //         } else
-        //         if (ch.id !== e.id && ch.start > e.end && ch.end < e.end) {
-        //             console.log('+++');
-        //             ch.width = 100;
-
-        //         }
-        //     }
-            
-        // }
-        return arrOfSameTimeActs;
+            }            
+        })
     }
 }
 
@@ -181,15 +142,15 @@ class RenderActions {
 
         this.#renderHours = renderHours;
 
-        this.renderToDoList(this.#toDoList);    
+        this.renderToDoList(this.#toDoList);
     }
 
-    renderOneAct(act){
+    renderOneAct(act) {
         const actContainer = document.createElement("div");
         actContainer.className = "event-block";
         actContainer.innerHTML = `
             <p>${act.title}</p>
-        `;    
+        `;
 
         actContainer.setAttribute("style", `height: ${act.duration * 2}px; width: ${act.width}px; top: ${act.start * 2}px; left: ${act.leftX}px; background: #E2ECF5; border-left: 3px solid #6e9fcf80;`);
 
@@ -198,7 +159,7 @@ class RenderActions {
     }
 
 
-    renderToDoList(list){
+    renderToDoList(list) {
         this.container.innerHTML = '';
         this.#renderHours.renderAll();
 
@@ -221,234 +182,258 @@ class RenderActions {
         listOfBlocks.forEach(item => {
             let titleText = item.querySelector('p');
 
+            // let x = item.offsetTop;
+            // let y = item.offsetLeft;
+            // let w = item.offsetWidth;
+            // let h = item.offsetHeight;
+            //     console.log(x)
+            //     console.log(y)
+            //     console.log(w)
+            //     console.log(h)
+            //     console.log(item.getBoundingClientRect())
+
             // calculating time from pixels
             let startInPixels = item.style.top.replace('px', '');
-            let startHours = (+startInPixels/2 - ((+startInPixels/2) % 60)) / 60 + 8 +"";
-            let startMinutes = (+startInPixels/2) % 60 + "";
-            let duration = +item.style.height.replace('px', '')/2;
-            
-            // event for event box
-            item.addEventListener ("click", () => {
+            let startHours = (+startInPixels / 2 - ((+startInPixels / 2) % 60)) / 60 + 8 + "";
+            let startMinutes = (+startInPixels / 2) % 60 + "";
+            let duration = +item.style.height.replace('px', '') / 2;
 
-                const modalWindow = document.querySelector(".modal-info");    
-                modalWindow.classList.add('active'); 
+            // event for event box
+            item.addEventListener("click", () => {
+
+                const modalWindow = document.querySelector(".modal-info");
+                modalWindow.classList.add('active');
                 modalWindow.innerHTML = `
                     <div class="modal-info-text">
                         <b>Event name: ${item.textContent}</b>
                         <p>Event start: ${startHours.padStart(2, "0")}:${startMinutes.padStart(2, "0")}</p>
                         <p>Duration: ${duration} minutes</p>
                     </div>    
-                `;    
+                `;
 
-                
+
                 // change event colors
-                    // background
-                const inputColorContainer = document.createElement("div"); 
+                // background color
+                const inputColorContainer = document.createElement("div");
                 inputColorContainer.className = "input-color-container"
 
-                const actColorInput = document.createElement("input"); 
+                const actColorInput = document.createElement("input");
                 actColorInput.type = 'color';
 
-                const actColorInputLabel = document.createElement("label"); 
+                const actColorInputLabel = document.createElement("label");
                 actColorInputLabel.className = "input-color-background";
-                actColorInputLabel.textContent = "choose a background";                
+                actColorInputLabel.textContent = "choose a background";
                 actColorInputLabel.append(actColorInput);
 
                 inputColorContainer.append(actColorInputLabel);
 
                 actColorInput.value = "#E2ECF5";
                 actColorInput.addEventListener("input", () => {
-                    item.style.background =  `${actColorInput.value}`;
+                    item.style.background = `${actColorInput.value}`;
                 })
-                     // border
-                const borderColorInput = document.createElement("input"); 
+                // border color
+                const borderColorInput = document.createElement("input");
                 borderColorInput.type = 'color';
 
-                const borderColorInputLabel = document.createElement("label"); 
+                const borderColorInputLabel = document.createElement("label");
                 borderColorInputLabel.className = "input-color-border";
-                borderColorInputLabel.textContent = "choose a border";                
+                borderColorInputLabel.textContent = "choose a border";
                 borderColorInputLabel.append(borderColorInput);
 
                 inputColorContainer.append(borderColorInputLabel);
 
                 borderColorInput.value = "#6e9fcf";
                 borderColorInput.addEventListener("input", () => {
-                    item.style.borderLeft =  `3px solid ${borderColorInput.value}80`;
+                    item.style.borderLeft = `3px solid ${borderColorInput.value}80`;
                 })
-                // modalWindow.append(inputColorContainer);                    
+
 
                 // container for buttons
-                const closeBtn = document.createElement("button"); 
-                const removeBtn = document.createElement("button");  
-                const commitBtn = document.createElement("button");  
-                const containerForButtons = document.createElement("div");  
+                const closeBtn = document.createElement("button");
+                const removeBtn = document.createElement("button");
+                const commitBtn = document.createElement("button");
+                const containerForButtons = document.createElement("div");
                 containerForButtons.append(commitBtn, closeBtn, removeBtn);
-                // modalWindow.append(containerForButtons);
+
 
                 // commit changes in modal window
                 commitBtn.type = "button";
                 commitBtn.className = "modal-info-commit-btn";
-                commitBtn.innerText = "Commit changes";               
-            
+                commitBtn.innerText = "Commit changes";
+
                 // close modal window
-                 
+
                 closeBtn.type = "button";
                 closeBtn.className = "modal-info-close-btn";
                 closeBtn.innerText = "Close this window";
                 closeBtn.addEventListener('click', (event) => {
-                    if (event.target !==closeBtn) {
+                    if (event.target !== closeBtn) {
                         return
                     }
-                    modalWindow.classList.remove('active'); 
+                    modalWindow.classList.remove('active');
                 })
-                    // remove btn
-                
+                // remove btn
+
                 removeBtn.type = "button";
                 removeBtn.className = "modal-info-remove-btn";
                 removeBtn.innerText = "Remove current event";
 
 
                 // remove event in calendar
-                removeBtn.addEventListener('click', (event) => { 
+                removeBtn.addEventListener('click', (event) => {
                     // cancel bubbling
-                    if (event.target !==removeBtn) {
+                    if (event.target !== removeBtn) {
                         return
                     }
 
-                    modalWindow.classList.remove('active'); 
+                    modalWindow.classList.remove('active');
 
 
                     // create arr from NodeList and filter ToDoList by index
-                    
+
 
                     toDoList = toDoList.filter(i => {
-                        return toDoList.indexOf(i) !== arrFromNode.indexOf(item)}
-                    );  
-                        
-                    // return i.title !== titleText.textContent || i.duration !== duration || i.start !== startInPixels/2}
-                    
+                        return toDoList.indexOf(i) !== arrFromNode.indexOf(item)
+                    }
+                    );
 
                     
-                    
+
                     this.#toDoList = new ListOfActions(toDoList);
                     this.renderToDoList(this.#toDoList.items);
                     console.log(toDoList)
-                    console.log(listOfActs) 
+                    console.log(listOfActs)
                 })
 
 
 
                 // change event title, start, duration
-                      // new title
-                    const inputChangeEventContainer = document.createElement("div"); 
-                    inputChangeEventContainer.className = "input-change-event-container"
-    
-                    const actNameInput = document.createElement("input"); 
-                    actNameInput.type = 'text';
-    
-                    const actNameInputLabel = document.createElement("label"); 
-                    actNameInputLabel.className = "input-event-properties";
-                    actNameInputLabel.textContent = "new name:";                
-                    actNameInputLabel.append(actNameInput);
-    
-                    inputChangeEventContainer.append(actNameInputLabel);
-    
+                // new title
+                const inputChangeEventContainer = document.createElement("div");
+                inputChangeEventContainer.className = "input-change-event-container";
+                inputChangeEventContainer.innerHTML = 'Change event properties'
+
+                const actNameInput = document.createElement("input");
+                actNameInput.type = 'text';
+
+                const actNameInputLabel = document.createElement("label");
+                actNameInputLabel.className = "input-event-properties";
+                actNameInputLabel.textContent = "new name:";
+                actNameInputLabel.append(actNameInput);
+
+                inputChangeEventContainer.append(actNameInputLabel);
+
+
+                // new start
+
+                const actStartInput = document.createElement("input");
+                actStartInput.type = 'time';
+                // actStartInput.value = "08:00";
+
+                const actStartInputLabel = document.createElement("label");
+                actStartInputLabel.className = "input-event-properties";
+                actStartInputLabel.textContent = "new start:";
+                actStartInputLabel.append(actStartInput);
+
+                inputChangeEventContainer.append(actStartInputLabel);
+
+                // new duration
+
+                const actDurationInput = document.createElement("input");
+                actDurationInput.type = 'number';
+
+                const actDurationInputLabel = document.createElement("label");
+                actDurationInputLabel.className = "input-event-properties";
+                actDurationInputLabel.textContent = "new duration:";
+                actDurationInputLabel.append(actDurationInput);
+
+                inputChangeEventContainer.append(actDurationInputLabel);
+
+
+
+                // commit changes 
+
+                commitBtn.addEventListener("click", () => {
+                    let currentNodeIndex = arrFromNode.indexOf(item);
+                    console.log(toDoList[currentNodeIndex])
+                    //new title
+                    if (!!actNameInput.value) {
+                        titleText.textContent = actNameInput.value;
+                        toDoList[currentNodeIndex].title = actNameInput.value;
+                    }
+
 
                     // new start
-                    
-                    const actStartInput = document.createElement("input"); 
-                    actStartInput.type = 'time';
-                    // actStartInput.value = "08:00";
-    
-                    const actStartInputLabel = document.createElement("label"); 
-                    actStartInputLabel.className = "input-event-properties";
-                    actStartInputLabel.textContent = "new start:";                
-                    actStartInputLabel.append(actStartInput);
-    
-                    inputChangeEventContainer.append(actStartInputLabel);    
 
-                        // new duration
-    
-                    const actDurationInput = document.createElement("input"); 
-                    actDurationInput.type = 'number';
-    
-                    const actDurationInputLabel = document.createElement("label"); 
-                    actDurationInputLabel.className = "input-event-properties";
-                    actDurationInputLabel.textContent = "new duration:";                
-                    actDurationInputLabel.append(actDurationInput);
-    
-                    inputChangeEventContainer.append(actDurationInputLabel);
-    
+                    let hoursNew = actStartInput.value.slice(0, 2);
+                    let minutesNew = actStartInput.value.slice(3);
 
-    
-                    // commit changes 
+                    let startTime = (+hoursNew - 8) * 60 + (+minutesNew);
 
-                    commitBtn.addEventListener("click", () => {
-                        let currentNodeIndex = arrFromNode.indexOf(item);
-                        console.log(toDoList[currentNodeIndex])
-                        //new title
-                        if (!!actNameInput.value){
-                            titleText.textContent = actNameInput.value; 
-                            toDoList[currentNodeIndex].title = actNameInput.value;                           
-                        }
-                       
 
-                        // new start
-                        
-                        let hoursNew = actStartInput.value.slice(0, 2);
-                        let minutesNew = actStartInput.value.slice(3);
-                          
-                        let startTime = (+hoursNew-8) * 60 + (+minutesNew);     
-                        
+                    if (!!actStartInput.value && startTime < 540 && startTime >= 0) {
+                        item.style.top = `${startTime * 2}px`;
+                        toDoList[currentNodeIndex].start = startTime;
 
-                        if (!!actStartInput.value && startTime < 540 && startTime >=0) {                            
-                            item.style.top = `${startTime *2}px`;
-                            toDoList[currentNodeIndex].start = startTime;
-                        }
-    
-                        
+                        toDoList = toDoList.sort(function (a, b) { return a.start - b.start });
+                        this.#toDoList = new ListOfActions(toDoList);
+                        this.renderToDoList(this.#toDoList.items);
+                    }
 
-                        //new  duration
-                        
-                        if (!!actDurationInput.value) {
-                            duration = actDurationInput.value;
-                            item.style.height = `${duration *2}px`;  
-                            toDoList[currentNodeIndex].duration = (+duration);                          
-                        }
-                        
 
-                        // rerender new modal window
-                        modalWindow.innerHTML = `
+
+                    //new  duration
+
+                    if (!!actDurationInput.value) {
+                        duration = actDurationInput.value;
+                        item.style.height = `${duration * 2}px`;
+                        toDoList[currentNodeIndex].duration = (+duration);
+
+                        toDoList = toDoList.sort(function (a, b) { return a.start - b.start });
+                        this.#toDoList = new ListOfActions(toDoList);
+                        this.renderToDoList(this.#toDoList.items);
+                    }
+
+
+                    // rerender new modal window
+                    modalWindow.innerHTML = `
                         <div class="modal-info-text">
                             <b>Event name: ${item.textContent}</b>
                             <p>Event start: ${startHours.padStart(2, "0")}:${startMinutes.padStart(2, "0")}</p>
                             <p>Duration: ${duration} minutes</p>
                         </div>    
-                         `;  
+                         `;
 
-                         if (!!actStartInput.value && startTime < 540 && startTime >=0) {                            
-                            modalWindow.innerHTML = `
+                    if (!!actStartInput.value && startTime < 540 && startTime >= 0) {
+                        modalWindow.innerHTML = `
                             <div class="modal-info-text">
                                 <b>Event name: ${item.textContent}</b>
                                 <p>Event start: ${hoursNew.padStart(2, "0")}:${minutesNew.padStart(2, "0")}</p>
                                 <p>Duration: ${duration} minutes</p>
                             </div>    
-                             `; 
-                        }
+                             `;
+                    }
 
-                         modalWindow.append(inputColorContainer, inputChangeEventContainer, containerForButtons);  
-
-                        toDoList = toDoList.sort(function (a,b) {return a.start - b.start});
-                        this.#toDoList = new ListOfActions(toDoList);
-                        this.renderToDoList(this.#toDoList.items);
-      
-                    })   
-    
                     modalWindow.append(inputColorContainer, inputChangeEventContainer, containerForButtons);
 
+                    // item.style.background =  `${actColorInput.value}`;
+                    console.log(actColorInput.value);
+                    console.log(item.style.background);
+
+                    modalWindow.classList.remove('active');
+
+                    // render events
+                    // toDoList = toDoList.sort(function (a, b) { return a.start - b.start });
+                    // this.#toDoList = new ListOfActions(toDoList);
+                    // this.renderToDoList(this.#toDoList.items);
+
+                })
+
+                modalWindow.append(inputColorContainer, inputChangeEventContainer, containerForButtons);
+
             })
- 
-        })   
+
+        })
 
     }
 
@@ -458,7 +443,7 @@ class RenderActions {
 // ____________________________________________________inputs
 class Inputs {
     #renderActions = null;
-    constructor(renderActions){
+    constructor(renderActions) {
         this.#renderActions = renderActions;
         this.list = null;
 
@@ -468,56 +453,60 @@ class Inputs {
         this.inputContainer = document.querySelector('.inputs-container');
         this.startInput = document.getElementById('start-event');
         this.durationInput = document.getElementById('duration-event');
-        this.titleInput = document.getElementById('title-event');        
+        this.titleInput = document.getElementById('title-event');
 
         this.startInput.value = "08:00";
-        
+
         this.addNewEvent();
 
     }
 
     addNewEvent() {
         // open inputs
-        this.btnShowInputs.addEventListener ('click', () => {
+        this.btnShowInputs.addEventListener('click', () => {
             this.inputContainer.classList.add('active');
             this.btnShowInputs.classList.add('active');
         })
         // close inputs
-        this.btnCloseInputs.addEventListener ('click', () => {
+        this.btnCloseInputs.addEventListener('click', () => {
             this.inputContainer.classList.remove('active');
             this.btnShowInputs.classList.remove('active');
         })
 
         // inputs logic
         this.btnAddEvent.addEventListener('click', () => {
+
             // calculating start for event from time
             let hours = this.startInput.value.slice(0, 2);
             let minutes = this.startInput.value.slice(3);
-            minutes= +minutes;
+            minutes = +minutes;
 
-            let startTime = (+hours - 8) * 60 + minutes;  
-            
+            let startTime = (+hours - 8) * 60 + minutes;
+
             // create new Act
 
             let newAct = {
                 start: startTime,
-                duration:  +this.durationInput.value,
+                duration: +this.durationInput.value,
                 title: this.titleInput.value,
             }
 
             if (this.durationInput.value > 0 && startTime < 540) {
+                this.inputContainer.classList.remove('active');
+                this.btnShowInputs.classList.remove('active');
                 toDoList.push(newAct);
-                this.list = new ListOfActions(toDoList);                
-                this.#renderActions.renderToDoList(this.list.items);                
-            }     
-            
+
+                this.list = new ListOfActions(toDoList);
+                this.#renderActions.renderToDoList(this.list.items);
+
+                this.startInput.value = "08:00";
+                this.durationInput.value = null;
+                this.titleInput.value = "";
+            }
+
         })
     }
 }
-
-
-
-
 
 
 
@@ -525,6 +514,11 @@ const renderHours = new RenderHours;
 let listOfActs = new ListOfActions(toDoList);
 const renderActions = new RenderActions(listOfActs, renderHours);
 const inputs = new Inputs(renderActions);
+
+
+
+
+
 console.log(toDoList);
 
 
