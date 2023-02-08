@@ -1,5 +1,4 @@
 // 1 minute === 2px
-// app works only with three events in the same time
 
 let toDoList = [
     {
@@ -122,7 +121,9 @@ class ListOfActions {
                     if(item.leftX === this.items[i].leftX) {
                         this.items[i].leftX += 100;
                     }
-                                      
+                    if (item.leftX ===140 && this.items[i].leftX==40){
+                        this.items[i].leftX += 200;
+                    }                                      
                 }
             }            
         })
@@ -169,8 +170,6 @@ class RenderActions {
 
         // modal 
         this.modalWindowOptions();
-
-
     }
 
     // remove events method and change colors
@@ -181,16 +180,6 @@ class RenderActions {
         let arrFromNode = Array.from(listOfBlocks);
         listOfBlocks.forEach(item => {
             let titleText = item.querySelector('p');
-
-            // let x = item.offsetTop;
-            // let y = item.offsetLeft;
-            // let w = item.offsetWidth;
-            // let h = item.offsetHeight;
-            //     console.log(x)
-            //     console.log(y)
-            //     console.log(w)
-            //     console.log(h)
-            //     console.log(item.getBoundingClientRect())
 
             // calculating time from pixels
             let startInPixels = item.style.top.replace('px', '');
@@ -416,16 +405,11 @@ class RenderActions {
 
                     modalWindow.append(inputColorContainer, inputChangeEventContainer, containerForButtons);
 
-                    // item.style.background =  `${actColorInput.value}`;
                     console.log(actColorInput.value);
                     console.log(item.style.background);
 
                     modalWindow.classList.remove('active');
 
-                    // render events
-                    // toDoList = toDoList.sort(function (a, b) { return a.start - b.start });
-                    // this.#toDoList = new ListOfActions(toDoList);
-                    // this.renderToDoList(this.#toDoList.items);
 
                 })
 
