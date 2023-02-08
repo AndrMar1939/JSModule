@@ -96,8 +96,8 @@ class ListOfActions {
     constructor(list) {
         list = list.sort(function (a, b) { return a.start - b.start });
         this.items = list.map(item => new Act(item));
+        
         this.calculateWidthAndLeft();
-
     }
 
     calculateWidthAndLeft() {
