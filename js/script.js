@@ -102,21 +102,16 @@ class ListOfActions {
 
     calculateWidthAndLeft() {
         // width    
-        let arr = [];
         this.items.forEach (item => {
             for (let i = 0; i < this.items.length; i++) {
                 
                 if(item.end > this.items[i].start && item.start < this.items[i].start  ||
                     item.end > this.items[i].start && item.end < this.items[i].end) {                    
-                    arr.push(item);
-                    arr.push(this.items[i]);
                     
                     item.width = 100;
                     this.items[i].width = 100;
 
-                    
-                    console.log(item);
-                    console.log(this.items[i]);
+                    // left coordinate
 
                     if(item.leftX === this.items[i].leftX) {
                         this.items[i].leftX += 100;
@@ -152,13 +147,9 @@ class RenderActions {
         actContainer.innerHTML = `
             <p>${act.title}</p>
         `;
-
-        actContainer.setAttribute("style", `height: ${act.duration * 2}px; width: ${act.width}px; top: ${act.start * 2}px; left: ${act.leftX}px; background: #E2ECF5; border-left: 3px solid #6e9fcf80;`);
-
-
+        actContainer.setAttribute("style", `height: ${act.duration * 2}px; width: ${act.width}px; top: ${act.start * 2}px; left: ${act.leftX}px; background: #E2ECF580; border-left: 3px solid #6e9fcf80;`);
         return actContainer;
     }
-
 
     renderToDoList(list) {
         this.container.innerHTML = '';
@@ -172,7 +163,7 @@ class RenderActions {
         this.modalWindowOptions();
     }
 
-    // remove events method and change colors
+    // remove and change events method and change colors
 
     modalWindowOptions() {
         let listOfBlocks = this.container.querySelectorAll(".event-block");
@@ -187,7 +178,7 @@ class RenderActions {
             let startMinutes = (+startInPixels / 2) % 60 + "";
             let duration = +item.style.height.replace('px', '') / 2;
 
-            // event for event box
+            // event for event block
             item.addEventListener("click", () => {
 
                 const modalWindow = document.querySelector(".modal-info");
@@ -202,7 +193,7 @@ class RenderActions {
 
 
                 // change event colors
-                // background color
+                    // background color
                 const inputColorContainer = document.createElement("div");
                 inputColorContainer.className = "input-color-container"
 
@@ -218,9 +209,9 @@ class RenderActions {
 
                 actColorInput.value = "#E2ECF5";
                 actColorInput.addEventListener("input", () => {
-                    item.style.background = `${actColorInput.value}`;
+                    item.style.background = `${actColorInput.value}80`;
                 })
-                // border color
+                     // border color
                 const borderColorInput = document.createElement("input");
                 borderColorInput.type = 'color';
 
@@ -245,13 +236,12 @@ class RenderActions {
                 containerForButtons.append(commitBtn, closeBtn, removeBtn);
 
 
-                // commit changes in modal window
+                // commit changes in modal window button
                 commitBtn.type = "button";
                 commitBtn.className = "modal-info-commit-btn";
                 commitBtn.innerText = "Commit changes";
 
-                // close modal window
-
+                // close modal window button
                 closeBtn.type = "button";
                 closeBtn.className = "modal-info-close-btn";
                 closeBtn.innerText = "Close this window";
@@ -261,8 +251,8 @@ class RenderActions {
                     }
                     modalWindow.classList.remove('active');
                 })
-                // remove btn
 
+                // remove btn
                 removeBtn.type = "button";
                 removeBtn.className = "modal-info-remove-btn";
                 removeBtn.innerText = "Remove current event";
@@ -274,30 +264,22 @@ class RenderActions {
                     if (event.target !== removeBtn) {
                         return
                     }
-
                     modalWindow.classList.remove('active');
 
-
-                    // create arr from NodeList and filter ToDoList by index
-
+                    // use arr from NodeList and filter ToDoList by index
 
                     toDoList = toDoList.filter(i => {
                         return toDoList.indexOf(i) !== arrFromNode.indexOf(item)
                     }
-                    );
-
-                    
+                    );                    
 
                     this.#toDoList = new ListOfActions(toDoList);
                     this.renderToDoList(this.#toDoList.items);
-                    console.log(toDoList)
-                    console.log(listOfActs)
-                })
-
+                });
 
 
                 // change event title, start, duration
-                // new title
+                     // new title
                 const inputChangeEventContainer = document.createElement("div");
                 inputChangeEventContainer.className = "input-change-event-container";
                 inputChangeEventContainer.innerHTML = 'Change event properties'
@@ -313,12 +295,11 @@ class RenderActions {
                 inputChangeEventContainer.append(actNameInputLabel);
 
 
-                // new start
+                      // new start elements
 
                 const actStartInput = document.createElement("input");
                 actStartInput.type = 'time';
-                // actStartInput.value = "08:00";
-
+                
                 const actStartInputLabel = document.createElement("label");
                 actStartInputLabel.className = "input-event-properties";
                 actStartInputLabel.textContent = "new start:";
@@ -338,8 +319,6 @@ class RenderActions {
 
                 inputChangeEventContainer.append(actDurationInputLabel);
 
-
-
                 // commit changes 
 
                 commitBtn.addEventListener("click", () => {
@@ -351,14 +330,12 @@ class RenderActions {
                         toDoList[currentNodeIndex].title = actNameInput.value;
                     }
 
-
-                    // new start
+                    // new start logic
 
                     let hoursNew = actStartInput.value.slice(0, 2);
                     let minutesNew = actStartInput.value.slice(3);
 
                     let startTime = (+hoursNew - 8) * 60 + (+minutesNew);
-
 
                     if (!!actStartInput.value && startTime < 540 && startTime >= 0) {
                         item.style.top = `${startTime * 2}px`;
@@ -369,9 +346,7 @@ class RenderActions {
                         this.renderToDoList(this.#toDoList.items);
                     }
 
-
-
-                    //new  duration
+                    //new  duration logic
 
                     if (!!actDurationInput.value) {
                         duration = actDurationInput.value;
@@ -382,7 +357,6 @@ class RenderActions {
                         this.#toDoList = new ListOfActions(toDoList);
                         this.renderToDoList(this.#toDoList.items);
                     }
-
 
                     // rerender new modal window
                     modalWindow.innerHTML = `
@@ -409,22 +383,14 @@ class RenderActions {
                     console.log(item.style.background);
 
                     modalWindow.classList.remove('active');
-
-
                 })
-
                 modalWindow.append(inputColorContainer, inputChangeEventContainer, containerForButtons);
-
             })
-
         })
-
     }
-
-
 }
 
-// ____________________________________________________inputs
+// ____________________________________________________inputs for a new event
 class Inputs {
     #renderActions = null;
     constructor(renderActions) {
@@ -475,6 +441,7 @@ class Inputs {
                 title: this.titleInput.value,
             }
 
+            // control time for the new event            
             if (this.durationInput.value > 0 && startTime < 540) {
                 this.inputContainer.classList.remove('active');
                 this.btnShowInputs.classList.remove('active');
@@ -487,21 +454,14 @@ class Inputs {
                 this.durationInput.value = null;
                 this.titleInput.value = "";
             }
-
         })
     }
 }
-
-
 
 const renderHours = new RenderHours;
 let listOfActs = new ListOfActions(toDoList);
 const renderActions = new RenderActions(listOfActs, renderHours);
 const inputs = new Inputs(renderActions);
-
-
-
-
 
 console.log(toDoList);
 
