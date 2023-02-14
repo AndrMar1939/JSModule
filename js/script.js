@@ -86,8 +86,23 @@ class Act {
         this.end = item.start + item.duration;
         this.leftX = 40;
         this.id = Act.id++;
+        // this.time = this.getTime(item);
+        this.startHours = (item.start - (item.start % 60)) / 60 + 8;
+        this.startMinutes = item.start % 60;
     }
     static id = 0;
+
+    getTime(item) {
+        // calculating time from pixels
+
+        // const startHours = 
+        // const startMinutes = item.start % 60;       
+        // let dateForCalculation = new Date();
+
+        // let dateOfAct = new Date(dateForCalculation.getFullYear(), dateForCalculation.getMonth(), dateForCalculation.getDate(), startHours, startMinutes);
+        // console.log(dateOfAct);
+        // return dateOfAct;
+    }
 }
 // _____________________________________________________________________________________________
 
@@ -96,31 +111,31 @@ class ListOfActions {
     constructor(list) {
         list = list.sort(function (a, b) { return a.start - b.start });
         this.items = list.map(item => new Act(item));
-        
+
         this.calculateWidthAndLeft();
     }
 
     calculateWidthAndLeft() {
         // width    
-        this.items.forEach (item => {
+        this.items.forEach(item => {
             for (let i = 0; i < this.items.length; i++) {
-                
-                if(item.end > this.items[i].start && item.start < this.items[i].start  ||
-                    item.end > this.items[i].start && item.end < this.items[i].end) {                    
-                    
+
+                if (item.end > this.items[i].start && item.start < this.items[i].start ||
+                    item.end > this.items[i].start && item.end < this.items[i].end) {
+
                     item.width = 100;
                     this.items[i].width = 100;
 
                     // left coordinate
 
-                    if(item.leftX === this.items[i].leftX) {
+                    if (item.leftX === this.items[i].leftX) {
                         this.items[i].leftX += 100;
                     }
-                    if (item.leftX ===140 && this.items[i].leftX==40){
+                    if (item.leftX === 140 && this.items[i].leftX == 40) {
                         this.items[i].leftX += 200;
-                    }                                      
+                    }
                 }
-            }            
+            }
         })
     }
 }
@@ -193,7 +208,7 @@ class RenderActions {
 
 
                 // change event colors
-                    // background color
+                // background color
                 const inputColorContainer = document.createElement("div");
                 inputColorContainer.className = "input-color-container"
 
@@ -211,7 +226,7 @@ class RenderActions {
                 actColorInput.addEventListener("input", () => {
                     item.style.background = `${actColorInput.value}80`;
                 })
-                     // border color
+                // border color
                 const borderColorInput = document.createElement("input");
                 borderColorInput.type = 'color';
 
@@ -271,15 +286,16 @@ class RenderActions {
                     toDoList = toDoList.filter(i => {
                         return toDoList.indexOf(i) !== arrFromNode.indexOf(item)
                     }
-                    );                    
+                    );
 
-                    this.#toDoList = new ListOfActions(toDoList);
+                    this.#toDoList = new ListOfActions(toDoList);                  
+                    
                     this.renderToDoList(this.#toDoList.items);
                 });
 
 
                 // change event title, start, duration
-                     // new title
+                // new title
                 const inputChangeEventContainer = document.createElement("div");
                 inputChangeEventContainer.className = "input-change-event-container";
                 inputChangeEventContainer.innerHTML = 'Change event properties'
@@ -295,11 +311,11 @@ class RenderActions {
                 inputChangeEventContainer.append(actNameInputLabel);
 
 
-                      // new start elements
+                // new start elements
 
                 const actStartInput = document.createElement("input");
                 actStartInput.type = 'time';
-                
+
                 const actStartInputLabel = document.createElement("label");
                 actStartInputLabel.className = "input-event-properties";
                 actStartInputLabel.textContent = "new start:";
@@ -344,6 +360,7 @@ class RenderActions {
                         toDoList = toDoList.sort(function (a, b) { return a.start - b.start });
                         this.#toDoList = new ListOfActions(toDoList);
                         this.renderToDoList(this.#toDoList.items);
+                        listOfActs = new ListOfActions(toDoList);
                     }
 
                     //new  duration logic
@@ -393,9 +410,10 @@ class RenderActions {
 // ____________________________________________________inputs for a new event
 class Inputs {
     #renderActions = null;
+    #listOfActs = null;
     constructor(renderActions) {
         this.#renderActions = renderActions;
-        this.list = null;
+        this.#listOfActs = null;
 
         this.btnAddEvent = document.querySelector('.input-btn-add');
         this.btnShowInputs = document.querySelector('.open-inputs-btn');
@@ -447,8 +465,8 @@ class Inputs {
                 this.btnShowInputs.classList.remove('active');
                 toDoList.push(newAct);
 
-                this.list = new ListOfActions(toDoList);
-                this.#renderActions.renderToDoList(this.list.items);
+                listOfActs = new ListOfActions(toDoList);
+                this.#renderActions.renderToDoList(listOfActs.items);
 
                 this.startInput.value = "08:00";
                 this.durationInput.value = null;
@@ -458,12 +476,57 @@ class Inputs {
     }
 }
 
+// _____________________________________________________________________________________
+class ActiveActBanner {
+    
+    constructor() {
+        this.activeBannerWindow = document.querySelector('.active-banner-container');
+        this.timerForBanner();
+    }
+
+    timerForBanner() {
+        this.activeBannerWindow.innerHTML = '';
+        setInterval(() => {
+            let currentDate = new Date();  
+            console.log(currentDate.getMinutes())            
+
+            listOfActs.items.forEach(item => {
+   
+                if (currentDate.getHours() === item.startHours && currentDate.getMinutes() === item.startMinutes) {
+                    this.activeBannerWindow.classList.add('active');
+                    this.activeBannerWindow.innerHTML = `
+                       <h3>Event "${item.title}" started</h3>
+                    `;
+                    console.log('hi')  
+
+                }
+            })    
+
+        }, 1000);
+        setInterval(() => {
+            this.activeBannerWindow.classList.remove('active');
+        }, 60000);
+        return console.log(toDoList);
+    }
+
+
+}
+
+
+
+
 const renderHours = new RenderHours;
 let listOfActs = new ListOfActions(toDoList);
 const renderActions = new RenderActions(listOfActs, renderHours);
 const inputs = new Inputs(renderActions);
+let banners = new ActiveActBanner(listOfActs);
 
-console.log(toDoList);
+// console.log(toDoList);
+console.log(listOfActs);
+// console.log(banners.timerForBanner());
+
+
+
 
 
 

@@ -349,4 +349,19 @@
   width: 60%;
 }
 
-  
+/*_____________________________________________ active event banner */
+.active-banner-container{
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: rgba(128, 255, 0, 0.5);
+  height: 20px;
+  transform: translateY(-100%);
+  transition: 0.33s;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.active-banner-container.active{
+  transform: translateY(0%);
+}
